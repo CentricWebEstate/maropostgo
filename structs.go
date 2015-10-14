@@ -8,6 +8,7 @@ type Maropost struct {
 }
 
 type Contact struct {
+	Maropost
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
 	Email       string `json:"email"`
