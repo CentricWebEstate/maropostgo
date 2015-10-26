@@ -9,7 +9,7 @@ import "fmt"
 func MakeRequest(address string, method string, data interface{}) (*http.Response, error) {
 	address = API_URL + address
 	jsob, err := json.Marshal(data)
-	fmt.Print("%v\n", jsob)
+	fmt.Print("%v\n", string(jsob))
 	if err != nil {
 		return nil, err
 	}
