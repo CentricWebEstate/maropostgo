@@ -44,7 +44,7 @@ func (m *Maropost) GetContactsByList(list string, page string) (*gabs.Container,
 }
 
 func (m *Maropost) UpdateContact(id string, listId string, data interface{}) (*gabs.Container, error) {
-	var object map[string]interface{}
+	object := make(map[string]interface{})
 	object["contact"] = data
 	response, err := MakeRequest(m.Account+"/lists/"+listId+"/contacts/"+id+".json?auth_token="+m.AuthToken, "PUT", object)
 	jsonBytes, err := ioutil.ReadAll(response.Body)
