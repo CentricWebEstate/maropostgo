@@ -4,6 +4,6 @@ import "testing"
 
 func TestGetContactsByList(t *testing.T) {
 	m := Maropost{"abcd1234", "000"}
-	json, err := m.GetContactsByList("112233")
+	json, err := m.GetContactsByList("112233", "1")
 	t.Logf("%+v\n\n\n%+v", json, err)
 }

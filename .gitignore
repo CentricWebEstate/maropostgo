@@ -24,3 +24,5 @@ _testmain.go
 *.prof
 
 *.swp
+
+marogo_test_2.go

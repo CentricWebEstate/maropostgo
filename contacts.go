@@ -1,7 +1,11 @@
 package marogo
 
 import "sync"
+import "errors"
+import "github.com/jeffail/gabs"
 import "encoding/json"
+
+var ErrNotParsed = errors.New("Could not get gabs to parse json buffer")
 
 func (m Maropost) NewContact(first_name string, last_name string, email string) *Contact {
 	contact := Contact{m, first_name, last_name, email, "", "", make(map[string]interface{}), false}
@@ -18,17 +22,22 @@ func (c *Contact) SubscribeToLists(lists []string) (bool, error) {
 	return true, nil
 }
 
-func (m *Maropost) GetContactsByList(list string) (*[]map[string]interface{}, error) {
-	response, err := MakeRequest(m.Account+"/lists/"+list+"/contacts.json?auth_token="+m.AuthToken, "GET", nil)
+func (m *Maropost) GetContactsByList(list string, page string) (*gabs.Container, error) {
+	// Make our request
+	response, err := MakeRequest(m.Account+"/lists/"+list+"/contacts.json?page="+page+"&auth_token="+m.AuthToken, "GET", nil)
 	if err != nil {
-		return nil, err
-	}
-	var data []map[string]interface{}
-	json_encoder := json.NewDecoder(response.Body)
-	err = json_encoder.Decode(&data)
-	if err != nil {
+		panic(err)
 		return nil, err
 	}
 
-	return &data, err
+	var object interface{}
+	jsonDecoder := json.NewDecoder(response.Body)
+	if err = jsonDecoder.Decode(&object); err != nil {
+		return nil, err
+	}
+
+	jsonObject := gabs.New()
+	jsonObject.SetP(object, "array")
+
+	return jsonObject.S("array"), nil
 }
