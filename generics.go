@@ -33,8 +33,8 @@ func MakeRequest(address string, method string, data interface{}, needsHeader bo
 	return response, nil
 }
 
-func MakeAsyncRequest(address string, method string, data interface{}, wg *sync.WaitGroup) (bool, error) {
-	MakeRequest(address, method, data)
+func MakeAsyncRequest(address string, method string, data interface{}, wg *sync.WaitGroup, needsHeader bool) (bool, error) {
+	MakeRequest(address, method, data, needsHeader)
 	wg.Done()
 
 	return true, nil

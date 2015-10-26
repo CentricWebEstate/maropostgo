@@ -17,7 +17,7 @@ func (c *Contact) SubscribeToLists(lists []string) (bool, error) {
 	wg := &sync.WaitGroup{}
 	for _, v := range lists {
 		wg.Add(1)
-		go MakeAsyncRequest(c.Account+"/lists/"+v+"/contacts.json?auth_token="+c.AuthToken, "POST", c, wg)
+		go MakeAsyncRequest(c.Account+"/lists/"+v+"/contacts.json?auth_token="+c.AuthToken, "POST", c, wg, false)
 	}
 	wg.Wait()
 	return true, nil
@@ -25,7 +25,7 @@ func (c *Contact) SubscribeToLists(lists []string) (bool, error) {
 
 func (m *Maropost) GetContactsByList(list string, page string) (*gabs.Container, error) {
 	// Make our request
-	response, err := MakeRequest(m.Account+"/lists/"+list+"/contacts.json?page="+page+"&auth_token="+m.AuthToken, "GET", nil)
+	response, err := MakeRequest(m.Account+"/lists/"+list+"/contacts.json?page="+page+"&auth_token="+m.AuthToken, "GET", nil, false)
 	if err != nil {
 		panic(err)
 		return nil, err
@@ -46,7 +46,7 @@ func (m *Maropost) GetContactsByList(list string, page string) (*gabs.Container,
 func (m *Maropost) UpdateContact(id string, listId string, data interface{}) (*gabs.Container, error) {
 	object := make(map[string]interface{})
 	object["contact"] = data
-	response, err := MakeRequest(m.Account+"/lists/"+listId+"/contacts/"+id+".json?auth_token="+m.AuthToken, "PUT", object)
+	response, err := MakeRequest(m.Account+"/lists/"+listId+"/contacts/"+id+".json?auth_token="+m.AuthToken, "PUT", object, true)
 	jsonBytes, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
