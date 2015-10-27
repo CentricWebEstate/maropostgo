@@ -5,6 +5,7 @@ import "errors"
 import "github.com/jeffail/gabs"
 import "encoding/json"
 import "io/ioutil"
+import "fmt"
 
 var ErrNotParsed = errors.New("Could not get gabs to parse json buffer")
 
@@ -45,7 +46,8 @@ func (m *Maropost) GetContactsByList(list string, page string) (*gabs.Container,
 func (m *Maropost) UpdateContact(id string, listId string, data interface{}) (*gabs.Container, error) {
 	object := make(map[string]interface{})
 	object["contact"] = data
-	response, err := MakeRequest(m.Account+"/lists/"+listId+"/contacts/"+id+".json?auth_token="+m.AuthToken, "PUT", object, true)
+	url := m.Account + "/lists/" + listId + "/contacts/" + id + ".json?auth_token=" + m.AuthToken
+	response, err := MakeRequest(url, "PUT", object, true)
 	if err != nil {
 		return nil, err
 	}
@@ -56,5 +58,8 @@ func (m *Maropost) UpdateContact(id string, listId string, data interface{}) (*g
 	}
 
 	jsonParsed, err := gabs.ParseJSON(jsonBytes)
+	if err != nil {
+		fmt.Printf("%s\n%s\n\n", url, string(jsonBytes))
+	}
 	return jsonParsed, err
 }
