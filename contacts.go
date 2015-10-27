@@ -27,7 +27,6 @@ func (m *Maropost) GetContactsByList(list string, page string) (*gabs.Container,
 	// Make our request
 	response, err := MakeRequest(m.Account+"/lists/"+list+"/contacts.json?page="+page+"&auth_token="+m.AuthToken, "GET", nil, false)
 	if err != nil {
-		panic(err)
 		return nil, err
 	}
 
@@ -47,6 +46,10 @@ func (m *Maropost) UpdateContact(id string, listId string, data interface{}) (*g
 	object := make(map[string]interface{})
 	object["contact"] = data
 	response, err := MakeRequest(m.Account+"/lists/"+listId+"/contacts/"+id+".json?auth_token="+m.AuthToken, "PUT", object, true)
+	if err != nil {
+		return nil, err
+	}
+
 	jsonBytes, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
