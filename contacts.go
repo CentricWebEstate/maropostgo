@@ -39,7 +39,7 @@ func (m *Maropost) GetContactsByList(list string, page string) (*gabs.Container,
 
 	jsonObject := gabs.New()
 	jsonObject.SetP(object, "array")
-
+	defer response.Body.Close()
 	return jsonObject.S("array"), nil
 }
 
@@ -51,7 +51,7 @@ func (m *Maropost) UpdateContact(id string, listId string, data interface{}) (*g
 	if err != nil {
 		return nil, err
 	}
-
+	defer response.Body.Close()
 	jsonBytes, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err

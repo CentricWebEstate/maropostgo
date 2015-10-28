@@ -21,7 +21,7 @@ func MakeRequest(address string, method string, data interface{}, needsHeader bo
 	if needsHeader {
 		request.Header.Add("Content-Type", "application/json")
 	}
-
+	request.Close = true
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
@@ -32,7 +32,11 @@ func MakeRequest(address string, method string, data interface{}, needsHeader bo
 }
 
 func MakeAsyncRequest(address string, method string, data interface{}, wg *sync.WaitGroup, needsHeader bool) (bool, error) {
-	MakeRequest(address, method, data, needsHeader)
+	response, err := MakeRequest(address, method, data, needsHeader)
+	if err != nil {
+		return false, err
+	}
+	defer response.Body.Close()
 	wg.Done()
 
 	return true, nil
